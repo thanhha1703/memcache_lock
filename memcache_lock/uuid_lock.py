@@ -7,7 +7,7 @@ from exceptions import TimeoutException
 
 class UUIDLock(object):
 
-    def __init__(self, key, default_timeout=24*3600, max_wait_time=60, force_lock=True):
+    def __init__(self, key, default_timeout=24*3600, max_wait_time=60, force_lock=False):
         self.uuid = uuid.uuid4()
         self.key = key
         self.default_timeout = default_timeout
@@ -26,7 +26,7 @@ class UUIDLock(object):
         return self._lock()
 
     def _lock(self):
-        result = memcache.set(self.key, self.uuid)
+        result = memcache.set(self.key, self.uuid, time=self.default_timeout)
         if self.is_lock_acquired():
             return result
         else:
